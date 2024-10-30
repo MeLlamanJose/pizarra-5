@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    image: proyecto-pizarra-virtual-bolt-5
+    container_name: proyecto-pizarra-virtual-bolt-5-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:8000
+    platform: linux/amd64,linux/arm64
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    platform: linux/amd64,linux/arm64
+    container_name: proyecto-pizarra-virtual-bolt-5-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pizarra_virtual
+      MYSQL_USER: pizarra_user
+      MYSQL_PASSWORD: nueva
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
